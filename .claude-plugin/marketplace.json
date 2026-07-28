@@ -1,0 +1,14 @@
+{
+  "name": "monta-skills",
+  "owner": {
+    "name": "leemonta9482",
+    "url": "https://github.com/leemonta9482"
+  },
+  "plugins": [
+    {
+      "name": "project-init",
+      "source": "./",
+      "description": "프로젝트 규율 뼈대 생성기 — 개발 가이드라인·협업/개인 규율·CI·품질 게이트를 스택에 맞게 세팅."
+    }
+  ]
+}

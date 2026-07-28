@@ -1,0 +1,19 @@
+{
+  "name": "project-init",
+  "displayName": "Project Init — 프로젝트 규율 뼈대 생성기",
+  "description": "프로젝트명·기술스택·개요서를 받아 스택에 맞는 개발 가이드라인·협업/개인 규율 뼈대(CLAUDE.md·CODEOWNERS·CI·pre-commit·MR·spec/plan)를 리포에 생성한다.",
+  "version": "1.0.0",
+  "author": {
+    "name": "leemonta9482",
+    "url": "https://github.com/leemonta9482"
+  },
+  "repository": "https://github.com/leemonta9482/project-init",
+  "keywords": [
+    "scaffold",
+    "governance",
+    "ci",
+    "codeowners",
+    "project-setup",
+    "claude-md"
+  ]
+}

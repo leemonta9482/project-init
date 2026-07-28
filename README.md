@@ -38,14 +38,26 @@
 
 ## 설치
 
-Claude Code 개인 스킬 디렉토리에 클론합니다.
+### 방법 1 — 플러그인 원클릭 설치 (권장)
+
+Claude Code에서:
+
+```bash
+/plugin marketplace add leemonta9482/project-init
+/plugin install project-init@monta-skills
+/reload-plugins
+```
+
+> 비공개 레포이므로 본인 GitHub 인증이 되어 있어야 합니다.
+
+### 방법 2 — 개인 스킬 디렉토리에 클론
 
 ```bash
 git clone https://github.com/leemonta9482/project-init.git ~/.claude/skills/project-init
 ```
 
-이후 Claude Code에서 `/project-init` 또는 "프로젝트 뼈대 잡아줘", "이 스택으로 프로젝트 구조 세팅해줘"
-같은 말로 호출하면 발동합니다.
+두 방법 모두 설치 후 Claude Code에서 `/project-init` 또는 "프로젝트 뼈대 잡아줘",
+"이 스택으로 프로젝트 구조 세팅해줘" 같은 말로 호출하면 발동합니다.
 
 ## 구성
 
