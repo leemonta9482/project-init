@@ -1,0 +1,77 @@
+# GitHub Actions — 경로 기반 다층 게이트 (GitLab CI 템플릿의 등가물)
+# 배치: .github/workflows/ci.yml
+# 원리: paths 필터로 바뀐 영역의 job만 실행. 브랜치 보호에서 이 체크들을 "required"로.
+
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [{{DEFAULT_BRANCH}}]
+
+jobs:
+  # ===== 어떤 영역이 바뀌었는지 판별 =====
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      area_a: ${{ steps.filter.outputs.area_a }}
+      area_b: ${{ steps.filter.outputs.area_b }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            area_a:
+              - '{{AREA_PATH_A}}/**'
+              - '{{CONTRACT_PATH}}/**'
+            area_b:
+              - '{{AREA_PATH_B}}/**'
+
+  # ===== 영역 A: lint + test =====
+  area_a:
+    needs: changes
+    if: ${{ needs.changes.outputs.area_a == 'true' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: setup
+        run: {{AREA_A_SETUP}}
+      - name: lint
+        run: {{AREA_A_LINT_CMD}}
+      - name: format check
+        run: {{AREA_A_FORMAT_CHECK}}
+      - name: test
+        run: {{AREA_A_TEST_CMD}}
+    # DB 등 필요 시:
+    # services:
+    #   postgres:
+    #     image: postgres:16-alpine
+    #     env: { POSTGRES_PASSWORD: ci_only }
+
+  # ===== 영역 B: lint + test =====
+  area_b:
+    needs: changes
+    if: ${{ needs.changes.outputs.area_b == 'true' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: setup
+        run: {{AREA_B_SETUP}}
+      - name: lint
+        run: {{AREA_B_LINT_CMD}}
+      - name: test
+        run: {{AREA_B_TEST_CMD}}
+
+  # ===== 배포 (기본 브랜치 push 시) =====
+  deploy:
+    if: ${{ github.ref == 'refs/heads/{{DEFAULT_BRANCH}}' && github.event_name == 'push' }}
+    needs: [area_a, area_b]
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: {{PROD_URL}}
+    steps:
+      - uses: actions/checkout@v4
+      - name: deploy
+        run: {{DEPLOY_CMD}}

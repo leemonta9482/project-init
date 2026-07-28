@@ -1,0 +1,23 @@
+{
+  "skill_name": "project-init",
+  "evals": [
+    {
+      "id": 0,
+      "name": "multi-area-web-collab-gitlab",
+      "prompt": "새 프로젝트 뼈대를 잡아줘. 프로젝트명은 'bookswap', 중고 도서 교환 웹서비스야. 스택은 프론트엔드 React 18 + Vite + TypeScript, 백엔드 FastAPI(Python) + PostgreSQL, Docker로 돌려. 개요: 회원이 자기 책을 등록하고, 다른 회원 책과 교환 요청을 보내고, 관리자가 신고를 처리하는 서비스. 협업이야 — 프론트는 @minji, 백엔드는 @junho, 나(@owner)는 총괄. 호스팅은 GitLab이야. 대상 폴더는 C:/Users/Monta/AppData/Local/Temp/claude/scaffold-test/bookswap 로 만들어줘(git init 하고 origin을 https://gitlab.example.com/team/bookswap.git 로 걸어둬). 모드는 물어보지 말고 협업으로 진행해.",
+      "files": []
+    },
+    {
+      "id": 1,
+      "name": "single-area-cli-solo-github-nocontract",
+      "prompt": "혼자 만드는 Go CLI 도구야. 프로젝트명 'logtail', 로그 파일을 tail 하면서 정규식으로 필터링하고 색을 입혀 출력하는 커맨드라인 유틸. DB도 API도 없어, 그냥 단일 바이너리. GitHub에 올릴 거고 나는 @solodev. 대상 폴더 C:/Users/Monta/AppData/Local/Temp/claude/scaffold-test/logtail 에 뼈대 잡아줘(git init + origin https://github.com/solodev/logtail.git). 개인 모드로 진행해. 단일 도구니까 불필요하게 영역을 쪼개지는 마.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "name": "nextjs-prisma-solo-github-contract",
+      "prompt": "Next.js 14 + TypeScript + Prisma(PostgreSQL) 로 만드는 개인 SaaS 사이드프로젝트 뼈대를 세팅하고 싶어. 이름은 'habitloop', 습관 추적 앱이야. 사용자가 습관을 만들고 매일 체크인하면 스트릭이 쌓이고, 주간 리포트를 받는 구조. 결제는 나중에. 혼자 하고(@me) GitHub 써. Prisma 마이그레이션이 있으니 그 부분 배포 순서 규칙도 반영해줘. 대상: C:/Users/Monta/AppData/Local/Temp/claude/scaffold-test/habitloop (git init, origin https://github.com/me/habitloop.git). 개인 모드.",
+      "files": []
+    }
+  ]
+}

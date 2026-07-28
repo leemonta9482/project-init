@@ -1,0 +1,90 @@
+# GitLab CI — 경로 기반 다층 게이트 (lint → test → build → deploy)
+# 배치: 리포 루트 .gitlab-ci.yml
+# 치환: {{LINT_CMD}} {{TEST_CMD}} {{BUILD_CMD}} 등을 자기 스택 명령으로.
+#
+# 원리: 바뀐 영역의 job만 트리거(changes:). 각 stage가 다른 계급의 실수를 잡는다.
+
+stages:
+  - lint
+  - test
+  - build
+  - deploy
+
+# ===== Docs-only 변경이 "파이프라인 없음"으로 머지 막히지 않게 하는 더미 =====
+docs:check:
+  stage: lint
+  image: alpine:3
+  script:
+    - echo "docs-only change — no further validation"
+  rules:
+    - changes: [docs/**/*]
+
+# ===== 영역 A =====
+{{AREA_A}}:lint:
+  stage: lint
+  image: {{AREA_A_IMAGE}}
+  before_script:
+    - {{AREA_A_SETUP}}          # 예: cd {{AREA_PATH_A}} && {{PKG_MANAGER}} install --frozen-lockfile
+  script:
+    - {{AREA_A_LINT_CMD}}       # 예: ruff check .  /  pnpm exec prettier --check .
+    - {{AREA_A_FORMAT_CHECK}}   # 예: ruff format --check .  /  tsc -b
+  rules:
+    - changes: [{{AREA_PATH_A}}/**/*, .gitlab-ci.yml]
+
+{{AREA_A}}:test:
+  stage: test
+  image: {{AREA_A_IMAGE}}
+  # services:                   # DB 등 필요 시 서비스 컨테이너 선언
+  #   - name: postgres:16-alpine
+  #     alias: postgres
+  before_script:
+    - {{AREA_A_SETUP}}
+  script:
+    - {{AREA_A_TEST_CMD}}       # 예: pytest -v  /  pnpm test
+  rules:
+    # 계약({{CONTRACT_ARTIFACT}}) 변경도 테스트 트리거에 포함 — 계약이 코드와 함께 검증되도록
+    - changes: [{{AREA_PATH_A}}/**/*, {{CONTRACT_PATH}}/**/*, .gitlab-ci.yml]
+
+# ===== 영역 B (필요 시 복제) =====
+{{AREA_B}}:lint:
+  stage: lint
+  image: {{AREA_B_IMAGE}}
+  before_script:
+    - {{AREA_B_SETUP}}
+  script:
+    - {{AREA_B_LINT_CMD}}
+  rules:
+    - changes: [{{AREA_PATH_B}}/**/*, .gitlab-ci.yml]
+
+{{AREA_B}}:test:
+  stage: test
+  image: {{AREA_B_IMAGE}}
+  before_script:
+    - {{AREA_B_SETUP}}
+  script:
+    - {{AREA_B_TEST_CMD}}
+  rules:
+    - changes: [{{AREA_PATH_B}}/**/*, .gitlab-ci.yml]
+
+# ===== 빌드 (기본 브랜치에서만) =====
+build:
+  stage: build
+  image: {{BUILD_IMAGE}}
+  before_script:
+    - {{BUILD_SETUP}}
+  script:
+    - {{BUILD_CMD}}
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "{{DEFAULT_BRANCH}}"'
+
+# ===== 배포 (기본 브랜치 머지 시 자동, 재현 가능하게) =====
+deploy:
+  stage: deploy
+  image: {{DEPLOY_IMAGE}}
+  script:
+    - {{DEPLOY_CMD}}            # 예: ssh/pull 후 docker compose up -d --build
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "{{DEFAULT_BRANCH}}"'
+  environment:
+    name: production
+    url: {{PROD_URL}}
